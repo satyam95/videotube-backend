@@ -2,7 +2,7 @@ import mongoose, { Schema, Document } from "mongoose";
 import jwt, { Secret } from "jsonwebtoken";
 import bcrypt from "bcrypt";
 
-interface IUser extends Document {
+export interface IUser extends Document {
   username: string;
   email: string;
   fullName: string;
@@ -71,14 +71,18 @@ userSchema.pre<IUser>("save", async function (next) {
   next();
 });
 
-userSchema.methods.isPasswordCorrect = async function (password: string): Promise<boolean> {
+userSchema.methods.isPasswordCorrect = async function (
+  password: string
+): Promise<boolean> {
   return await bcrypt.compare(password, this.password);
 };
 
 userSchema.methods.generateAccessToken = function (): string {
   const secret = process.env.ACCESS_TOKEN_SECRET as Secret;
   if (!secret) {
-    throw new Error("ACCESS_TOKEN_SECRET is not defined in the environment variables");
+    throw new Error(
+      "ACCESS_TOKEN_SECRET is not defined in the environment variables"
+    );
   }
 
   return jwt.sign(
@@ -98,7 +102,9 @@ userSchema.methods.generateAccessToken = function (): string {
 userSchema.methods.generateRefreshToken = function (): string {
   const secret = process.env.REFRESH_TOKEN_SECRET as Secret;
   if (!secret) {
-    throw new Error("REFRESH_TOKEN_SECRET is not defined in the environment variables");
+    throw new Error(
+      "REFRESH_TOKEN_SECRET is not defined in the environment variables"
+    );
   }
 
   return jwt.sign(
